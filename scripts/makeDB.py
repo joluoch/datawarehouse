@@ -9,9 +9,8 @@ TABLES = {}
 
 TABLES['time'] = (
     "CREATE TABLE IF NOT EXISTS `richards`.`time` ("
-    "  `idtime` INT NOT NULL,"
-    "  `idflow` INT NOT NULL,"
-    "  `date` INT NOT NULL,"
+    "  `idtime` INT NOT NULL AUTO_INCREMENT,"
+    "  `date` DATE NOT NULL,"
     "  `dayofweek` INT NOT NULL,"
     "   `hour` INT NOT NULL,"
     "   `minute` INT NOT NULL,"
@@ -22,7 +21,7 @@ TABLES['time'] = (
 
 TABLES['flow'] = (
     "CREATE TABLE IF NOT EXISTS `richards`.`flow` ("
-    "   `flowid` INT NOT NULL,"
+    "   `flowid` INT NOT NULL AUTO_INCREMENT,"
     "   `idtime` INT NOT NULL,"
     "   `flow1` INT NOT NULL,"
     "   `flow2` INT NOT NULL,"
@@ -39,7 +38,7 @@ TABLES['flow'] = (
 
 TABLES['occupancy'] = (
     "CREATE TABLE IF NOT EXISTS `richards`.`ocuppancy` ("
-        "`idocuppancy` INT NOT NULL,"
+        "`idocuppancy` INT NOT NULL AUTO_INCREMENT,"
         "`idtime` INT NOT NULL,"
         "`ocuppancy1` INT NOT NULL,"
         "`ocuppancy2` INT NOT NULL,"
