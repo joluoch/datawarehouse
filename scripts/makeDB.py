@@ -3,52 +3,45 @@ from __future__ import print_function
 import mysql.connector
 from mysql.connector import errorcode
 
-dbName = 'richards'
+dbName = 'Stations'
 
 TABLES = {}
 
 TABLES['time'] = (
-    "CREATE TABLE IF NOT EXISTS `richards`.`time` ("
-    "  `idtime` INT NOT NULL AUTO_INCREMENT,"
-    "  `date` DATE NOT NULL,"
+    "CREATE TABLE IF NOT EXISTS `time` ("
+    "  `date` DATETIME NOT NULL,"
     "  `dayofweek` INT NOT NULL,"
-    "   `hour` INT NOT NULL,"
+    "  `hour` INT NOT NULL,"
     "   `minute` INT NOT NULL,"
     "   `seconds` INT NOT NULL,"
-    "   PRIMARY KEY (`idtime`)"
+    "   PRIMARY KEY (`date`)"
 ") ENGINE=InnoDB;")
-    
+
+
 
 TABLES['flow'] = (
-    "CREATE TABLE IF NOT EXISTS `richards`.`flow` ("
+    "CREATE TABLE IF NOT EXISTS `flow` ("
     "   `flowid` INT NOT NULL AUTO_INCREMENT,"
-    "   `idtime` INT NOT NULL,"
+    "   `date` DATETIME NOT NULL,"
     "   `flow1` INT NOT NULL,"
     "   `flow2` INT NOT NULL,"
     "   `flow3` INT NOT NULL,"
     "   `flowtotal` INT NOT NULL,"
-    "   PRIMARY KEY (`flowid`),"
-    "   INDEX `timeflow_idx` (`idtime` ASC) VISIBLE,"
-    "   CONSTRAINT `timeflow`"
-            "FOREIGN KEY (`idtime`)"
-            "REFERENCES `richards`.`time` (`idtime`)"    
+    "   PRIMARY KEY (`flowid`)"   
 ") ENGINE=InnoDB;")
 
+ 
 
 
 TABLES['occupancy'] = (
-    "CREATE TABLE IF NOT EXISTS `richards`.`ocuppancy` ("
+    "CREATE TABLE IF NOT EXISTS `ocuppancy` ("
         "`idocuppancy` INT NOT NULL AUTO_INCREMENT,"
-        "`idtime` INT NOT NULL,"
+        "`date` DATETIME NOT NULL,"
         "`ocuppancy1` INT NOT NULL,"
         "`ocuppancy2` INT NOT NULL,"
-    "PRIMARY KEY (`idocuppancy`),"
-    "INDEX `ocuptime_idx` (`idtime` ASC) VISIBLE,"
-    "CONSTRAINT `ocuptime`"
-        "FOREIGN KEY (`idtime`)"
-        "REFERENCES `richards`.`time` (`idtime`)"
+    "PRIMARY KEY (`idocuppancy`)"
 ")ENGINE=InnoDB;")
-  
+
 
 
  
@@ -67,33 +60,40 @@ def create_database(cur):
         print("Failed creating database: {}".format(err))
         exit(1)
 
-try:
-    cur.execute("USE {}".format(dbName))
-except mysql.connector.Error as err:
-    print("Database {} does not exists.".format(dbName))
-    if err.errno == errorcode.ER_BAD_DB_ERROR:
-        create_database(cur)
-        print("Database {} created successfully.".format(dbName))
-        conn.database = dbName
-    else:
-        print(err)
-        exit(1)
-
-for table_name in TABLES:
-    table_description = TABLES[table_name]
     try:
-        print("Creating table {}: ".format(table_name), end='')
-        cur.execute(table_description)
+        cur.execute("USE {}".format(dbName))
     except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-            print("already exists.")
+        print("Database {} does not exists.".format(dbName))
+        if err.errno == errorcode.ER_BAD_DB_ERROR:
+            create_database(cur)
+            print("Database {} created successfully.".format(dbName))
+            conn.database = dbName
         else:
-            print(err.msg)
-    else:
-        print("OK")
+            print(err)
+            exit(1)
 
-cur.close()
-conn.close()
+    for table_name in TABLES:
+        table_description = TABLES[table_name]
+        try:
+            print("Creating table {}: ".format(table_name), end='')
+            cur.execute(table_description)
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+                print("already exists.")
+            else:
+                print(err.msg)
+        else:
+            print("OK")
+
+    cur.close()
+    conn.close()
+
+
+
+if __name__ == "__main__":
+    create_database(cur)
+    
+
 
 
     
