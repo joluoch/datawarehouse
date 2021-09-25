@@ -15,16 +15,19 @@ def DBConnect(dbName=None):
 
 def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
 
-    
-    
+    cols_2_drop = ['Unnamed: 0']
     try:
-        df['timestamp'] = pd.to_datetime(df['timestamp']).dt.date
+        df = df.drop(columns=cols_2_drop, axis=1)
+        df = df.fillna(0)
         
+       
     except KeyError as e:
         print("Error:", e)
 
     return df
 
+
+    
 def insert_to_time_table(dbName: str, df: pd.DataFrame, table_name: str) -> None:
     print('=============inserting time data============================')
 
@@ -46,8 +49,9 @@ def insert_to_time_table(dbName: str, df: pd.DataFrame, table_name: str) -> None
         except Exception as e:
             conn.rollback()
             print("Error: ", e)
-    print('=============Time data insert complete===============================')
+
     return
+print('=============Time data insert complete===============================')
 
 def insert_to_flow_table(dbName: str, df: pd.DataFrame, table_name: str) -> None:
     print('=============inserting flow data============================')
@@ -57,9 +61,9 @@ def insert_to_flow_table(dbName: str, df: pd.DataFrame, table_name: str) -> None
     df = preprocess_df(df)
     
     for _, row in df.iterrows():
-        sqlQuery = f"""INSERT INTO {table_name} (flow1, flow2, flow3, flowtotal)
-             VALUES( %s, %s, %s, %s);"""
-        data = (row[1], row[3], row[5], row[7])
+        sqlQuery = f"""INSERT INTO {table_name} (date,flow1, flow2, flow3, flowtotal)
+             VALUES( %s, %s, %s, %s, %s);"""
+        data = (row[0],row[1], row[3], row[5], row[7])
 
         try:
             # Execute the SQL command
@@ -81,9 +85,9 @@ def insert_to_occupancy_table(dbName: str, df: pd.DataFrame, table_name: str) ->
     df = preprocess_df(df)
     
     for _, row in df.iterrows():
-        sqlQuery = f"""INSERT INTO {table_name} (occupancy1, occupancy2, occupancy3)
+        sqlQuery = f"""INSERT INTO {table_name} (date,ocuppancy1, ocuppancy2)
              VALUES( %s, %s, %s);"""
-        data = (row[2], row[4], row[6])
+        data = (row[0],row[2], row[4])
 
         try:
             # Execute the SQL command
@@ -96,10 +100,54 @@ def insert_to_occupancy_table(dbName: str, df: pd.DataFrame, table_name: str) ->
             print("Error: ", e)
     return
 print('=============occupancy data insert complete===============================')
+
+
 if __name__ == "__main__":
-    df = pd.read_csv('../data/richards.csv')
-    DBConnect('richards')
-    insert_to_time_table(dbName='richards', df=df, table_name='time')
-    insert_to_flow_table(dbName='richards', df=df, table_name='flow')
-    insert_to_occupancy_table(dbName='richards', df=df, table_name='ocuppancy')
+    df = pd.read_csv('../data/test.csv')
+    DBConnect('stations')
+    insert_to_time_table(dbName='stations', df=df, table_name='time')
+    insert_to_flow_table(dbName='stations', df=df, table_name='flow')
+    insert_to_occupancy_table(dbName='stations', df=df, table_name='ocuppancy')
     
+
+
+
+        
+
+
+
+
+    
+
+
+
+
+
+
+
+'''def preprocess_flow(df: pd.DataFrame) -> pd.DataFrame:
+
+    cols_2_drop = ['Unnamed: 0']
+    try:
+        df = df.drop(columns=cols_2_drop, axis=1)
+        df = df.fillna(0)
+        
+        flow = df[['timestamp','flow1','flow2','flow3','totalflow']]
+        
+       
+    except KeyError as e:
+        print("Error:", e)
+
+    return flow
+def preprocess_oc(df: pd.DataFrame) -> pd.DataFrame:
+
+    cols_2_drop = ['Unnamed: 0']
+    try:
+        df = df.drop(columns=cols_2_drop, axis=1)
+        df = df.fillna(0)
+        ocup = df[['timestamp','occupancy1','occupancy2','occupancy3']]
+       
+    except KeyError as e:
+        print("Error:", e)
+
+    return  ocup'''
