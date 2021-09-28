@@ -19,9 +19,9 @@ final as (
     flow.flowtotal,
     occupancy.ocuppancy1
     occupancy.ocuppancy2
-      from orders
-      inner join customer on orders.customer_order_id = customer.customer_order_id
-      inner join state_map on customer.customer_st = state_map.st
+      from flow
+      inner join Date_Time on flow.date = time.date
+      inner join occupancy on flow.date = occupancy.date
     )
   select
     *
