@@ -17,15 +17,10 @@ ELT is mostly used when we don't really know the type of transformation needed f
 The data used is provided in https://anson.ucdavis.edu/~clarkf/  it contains station and traffic movement on those stations over time.
 
 # Approach 
-Step 1 .
 
-we will load the data from the different csv's into our Mysql database with the help of ariflow.
-Step 2
-
-with dbt we will make models to perform some tranformations on the  data
-step 3
-
-we will display the queried columns on redash 
+1. we will load the data from the different csv's into our Mysql database with the help of ariflow.
+2. with dbt we will make models to perform some tranformations on the  data
+3. we will display the queried columns on redash 
 
 
 
