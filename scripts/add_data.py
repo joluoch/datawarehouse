@@ -125,29 +125,32 @@ if __name__ == "__main__":
 
 
 
-'''def preprocess_flow(df: pd.DataFrame) -> pd.DataFrame:
-
-    cols_2_drop = ['Unnamed: 0']
-    try:
-        df = df.drop(columns=cols_2_drop, axis=1)
-        df = df.fillna(0)
-        
-        flow = df[['timestamp','flow1','flow2','flow3','totalflow']]
-        
-       
-    except KeyError as e:
-        print("Error:", e)
-
-    return flow
-def preprocess_oc(df: pd.DataFrame) -> pd.DataFrame:
-
-    cols_2_drop = ['Unnamed: 0']
-    try:
-        df = df.drop(columns=cols_2_drop, axis=1)
-        df = df.fillna(0)
-        ocup = df[['timestamp','occupancy1','occupancy2','occupancy3']]
-       
-    except KeyError as e:
-        print("Error:", e)
-
-    return  ocup'''
+'''with Date_Time as (
+  select
+    *
+  from {{ source('stations','time') }}
+),
+flow as (
+  select
+    *
+  from {{ source('stations','flow') }}
+),
+occupancy as (
+  select
+    *
+  from {{ source('stations','ocupancy') }}
+),
+final as (
+  select
+    Date_Time.date,
+    flow.flowtotal,
+    occupancy.ocuppancy1,
+    occupancy.ocuppancy2
+      from flow
+      inner join Date_Time on flow.date = time.date
+      inner join occupancy on flow.date = occupancy.date
+    )
+  select
+    *
+  from final
+'''
